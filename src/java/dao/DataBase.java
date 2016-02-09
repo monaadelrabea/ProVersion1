@@ -225,6 +225,32 @@ public class DataBase {
         }
         return productlist;
     }
+      public ArrayList<Product> getProductlistOfId(ArrayList<Integer> list) {
+        ArrayList<Product> productlist = new ArrayList<Product>();
+        try {
+            for(int i=0;i<list.size();i++){
+            PreparedStatement pStm = conn.prepareStatement("SELECT * FROM food.product where id=?");
+            pStm.setInt(1, i);
+            ResultSet rs = pStm.executeQuery();
+
+            while (rs.next()) {
+                p.setId(rs.getInt(1));
+                p.setName(rs.getString(2));
+                p.setImage( "   "+rs.getString(3));
+                p.setPrice(rs.getInt(4));
+                p.setDescription(rs.getString(5));
+                p.setQuantity(rs.getInt(6));
+                productlist.add(p);
+            }
+            
+            rs.close();
+            pStm.close();
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(Product.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return productlist;
+    }
      public ArrayList<Product> getProductlist1(String Catag) {
         ArrayList<Product> productlist = new ArrayList<Product>();
         try {
@@ -384,7 +410,7 @@ public class DataBase {
   
         boolean result = true;
         try {
-            PreparedStatement pStm = conn.prepareStatement("insert into  food. favorites values (?,?,?)");
+            PreparedStatement pStm = conn.prepareStatement("insert into  food.favourites values (?,?,?)");
             int id = max_id_f()+ 1;
             int pro = id_product(productname);
             int cart = id_cart(username);
@@ -406,7 +432,7 @@ public class DataBase {
   public boolean removeProduct_f(String username,String pname) {
         boolean result = true;
         try {
-            PreparedStatement pStm = conn.prepareStatement("delete  from  food.favorites where customer_id =? and product_id= ? ");
+            PreparedStatement pStm = conn.prepareStatement("delete  from  food.favourites where customer_id =? and product_id= ? ");
             pStm.setInt(1, id_cart(username));
             pStm.setInt(2, id_product(pname));
             pStm.execute();
@@ -446,7 +472,28 @@ public class DataBase {
         return result;
 
     }
-  
+   public ArrayList<Product> getProductlistOfFavourite(int userId ) {
+        ArrayList<Integer> productlist = new ArrayList<Integer>();
+        try {
+           
+            PreparedStatement pStm = conn.prepareStatement("SELECT product_id FROM food.favourites where customer_id=? ");
+            pStm.setInt(1, userId);
+           
+            ResultSet rs = pStm.executeQuery();
+
+            while (rs.next()) {
+                int i=rs.getInt(1);
+                productlist.add(i);     
+            }
+            
+            rs.close();
+            pStm.close();
+            
+        } catch (Exception ex) {
+            Logger.getLogger(DataBase.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return   getProductlistOfId(productlist);
+    }
     
     
    

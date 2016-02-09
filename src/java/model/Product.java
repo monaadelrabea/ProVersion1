@@ -5,7 +5,7 @@
  */
 package model;
 
-import com.mysql.jdbc.Clob;
+
 
 /**
  *
